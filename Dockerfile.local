@@ -1,0 +1,4 @@
+# build final image
+FROM alpine
+COPY main /usr/bin/proxyconf
+ENTRYPOINT [ "/usr/bin/proxyconf" ]

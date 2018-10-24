@@ -183,7 +183,9 @@ func writeConfig(path string, ssl bool, cert *certPathData, server_names []strin
 		f.WriteString("  listen 80;\n")
 	}
 	f.WriteString(fmt.Sprintf("  server_name %s %s.%s;\n", strings.Join(server_names, " "), alias, hostname))
-	f.WriteString(fmt.Sprintf("  proxy_pass http://%s:80;\n", alias))
+	f.WriteString("  location / {\n")
+	f.WriteString(fmt.Sprintf("    proxy_pass http://%s:80;\n", alias))
+	f.WriteString("  }\n")
 	f.WriteString("}\n")
 
 	log.Printf("server_names %s %s.%s (ssl: %t)", strings.Join(server_names, " "), alias, hostname, ssl && cert != nil)
