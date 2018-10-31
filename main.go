@@ -179,11 +179,12 @@ func writeConfig(path string, ssl bool, cert *certPathData, server_names []strin
 		f.WriteString("  listen 443 ssl http2;\n")
 		f.WriteString(fmt.Sprintf("  ssl_certificate %s/%s;\n", cert.dir, cert.cert))
 		f.WriteString(fmt.Sprintf("  ssl_certificate_key %s/%s;\n\n", cert.dir, cert.key))
-	} else {
-		f.WriteString("  listen 80;\n")
+		f.WriteString("if ($scheme=='http') { return 302 http://$server_name$request_uri; }\n")
 	}
+	f.WriteString("  listen 80;\n")
 	f.WriteString(fmt.Sprintf("  server_name %s %s.%s;\n", strings.Join(server_names, " "), alias, hostname))
 	f.WriteString("  location / {\n")
+	f.WriteString("    include proxy.conf;\n")
 	f.WriteString(fmt.Sprintf("    proxy_pass http://%s:80;\n", alias))
 	f.WriteString("  }\n")
 	f.WriteString("}\n")
